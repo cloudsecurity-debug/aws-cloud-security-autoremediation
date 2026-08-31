@@ -41,3 +41,7 @@ test-events.json
 Thumbs.db
 .vscode/
 .idea/
+
+# Python cache
+__pycache__/
+*.py[cod]
