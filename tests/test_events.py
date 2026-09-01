@@ -19,7 +19,7 @@ def test_normalize_s3_config_event():
     finding = normalize_config_event(event)
 
     assert finding == Finding(
-        control="cloud-security-autoremediation-s3-public-read-prohibited",
+        control="S3_PUBLIC_READ_PROHIBITED",
         resource_type="AWS::S3::Bucket",
         resource_id="security-test-bucket",
         severity="HIGH",
