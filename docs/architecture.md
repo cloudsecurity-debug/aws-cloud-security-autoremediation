@@ -2,10 +2,9 @@
 
 ## Overview
 
-This project implements an AWS cloud security detection and automated remediation pipeline using Terraform, AWS Config, Amazon EventBridge, AWS Lambda, Python, IAM, and Amazon S3.
+This project implements an AWS cloud security detection and automated remediation pipeline using Terraform, AWS Config, Amazon EventBridge, AWS Lambda, Python, IAM, Amazon S3, and CloudWatch.
 
 The primary use case is detecting S3 public-access misconfiguration and automatically enforcing S3 Public Access Block controls.
-```
 
 ## Architecture Flow
 
@@ -56,7 +55,6 @@ The remediation function runs on Python 3.12:
 `cloud-security-autoremediation-remediation`
 
 Its responsibility is intentionally narrow: enforce the required S3 Public Access Block configuration.
-```
 
 ### IAM
 
@@ -87,11 +85,21 @@ Verified components include:
 - Active AWS Config rule
 - Enabled EventBridge rule
 - Active Lambda function
+- Successful Lambda update
 - Successful Lambda remediation test
-- Successful EventBridge-to-Lambda integration test
+- AWS Config Lambda permission
+- EventBridge Lambda permission
+- Exactly one EventBridge target
 - CloudWatch Lambda execution logs
+- S3 Public Access Block enforcement
+- All four S3 Public Access Block controls confirmed enabled
+- Lambda unit tests passing
 
-The EventBridge-to-Lambda integration was tested using a controlled synthetic event. The S3 bucket was not intentionally exposed publicly merely to generate a live security incident.
+The remediation Lambda was directly tested against the controlled security-test bucket. The function returned a successful response and the resulting S3 Public Access Block configuration was verified through the AWS API.
+
+The EventBridge rule, target, and permissions were independently verified. A complete live AWS-generated `NON_COMPLIANT` event flowing from AWS Config through EventBridge into Lambda has not been intentionally manufactured.
+
+The S3 bucket was not intentionally exposed publicly merely to generate a live security incident.
 
 ## Current Boundary
 
