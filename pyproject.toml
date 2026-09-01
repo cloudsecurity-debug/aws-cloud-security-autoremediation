@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloud-security-autoremediation"
+version = "0.1.0"
+description = "AWS cloud security detection and automated remediation pipeline"
+
+[tool.setuptools.packages.find]
+where = ["src"]
