@@ -1,4 +1,6 @@
 name: Tests
+env:
+  AWS_DEFAULT_REGION: eu-north-1
 
 on:
   push:
