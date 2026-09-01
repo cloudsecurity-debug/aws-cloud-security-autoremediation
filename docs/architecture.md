@@ -97,9 +97,9 @@ Verified components include:
 
 The remediation Lambda was directly tested against the controlled security-test bucket. The function returned a successful response and the resulting S3 Public Access Block configuration was verified through the AWS API.
 
-The EventBridge rule, target, and permissions were independently verified. A complete live AWS-generated `NON_COMPLIANT` event flowing from AWS Config through EventBridge into Lambda has not been intentionally manufactured.
+The EventBridge rule, target, and permissions were independently verified. A controlled live test was performed against the dedicated security-test bucket, producing an AWS Config `NON_COMPLIANT` evaluation and subsequent `COMPLIANT` evaluation after remediation.
 
-The S3 bucket was not intentionally exposed publicly merely to generate a live security incident.
+The temporary public-read policy was removed after validation. No unrelated or production S3 resources were intentionally exposed.
 
 ## Current Boundary
 
