@@ -1,5 +1,26 @@
 # AWS Cloud Security Auto-Remediation
 
+> **Detect misconfiguration. Make a risk-based decision. Automatically enforce a secure state.**
+
+A production-style AWS cloud security automation project built with Terraform, AWS Config, Amazon EventBridge, AWS Lambda, Python, IAM, S3, and CloudWatch.
+
+The system detects S3 public-access violations and automatically enforces S3 Public Access Block through an event-driven remediation pipeline.
+
+## 🚦 Project Status
+
+| Area | Status |
+|---|---|
+| AWS infrastructure | ✅ Deployed |
+| AWS Config detection | ✅ Validated |
+| EventBridge routing | ✅ Validated |
+| Risk-based decision engine | ✅ Implemented |
+| Lambda remediation | ✅ Validated |
+| Live AWS remediation test | ✅ Completed |
+| Automated tests | ✅ 18 passing |
+| Dependency security audit | ✅ Passing |
+| GitHub Actions CI | ✅ Passing |
+| Terraform | ✅ No changes |
+
 A Terraform-managed AWS security automation project that detects S3 public-access misconfigurations and safely enforces remediation using AWS Config, Amazon EventBridge, AWS Lambda, Python, IAM, and Amazon S3.
 
 ## Project Overview
