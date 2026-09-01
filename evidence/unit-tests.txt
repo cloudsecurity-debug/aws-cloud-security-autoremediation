@@ -1,0 +1,21 @@
+Project: AWS Cloud Security Auto-Remediation
+
+Test suite:
+tests/test_remediate_s3_public.py
+
+Command:
+pytest -q tests/test_remediate_s3_public.py
+
+Result:
+3 passed in 0.56s
+
+Validated behaviors:
+1. Direct bucket remediation event applies S3 Public Access Block.
+2. AWS Config-style event extracts the affected bucket and applies remediation.
+3. Missing bucket input raises ValueError and does not call S3 remediation.
+
+Test type:
+Local unit tests using mocked AWS S3 API calls.
+
+AWS resources modified by these tests:
+None.
