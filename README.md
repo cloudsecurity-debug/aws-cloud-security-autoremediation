@@ -62,10 +62,14 @@ Verified:
 - EventBridge production rule is enabled.
 - Lambda remediation was successfully invoked.
 - EventBridge-to-Lambda integration was successfully tested with a controlled synthetic event.
+- A controlled live S3 public-read policy test was performed.
+- AWS Config recorded the test resource as NON_COMPLIANT.
+- The resulting remediation restored all four S3 Public Access Block settings.
+- AWS Config subsequently recorded the resource as COMPLIANT.
 - Lambda execution was observed in CloudWatch Logs.
-- Temporary test resources were removed after testing.
+- The temporary public-read policy was removed after validation.
 
-The project intentionally did not make the S3 bucket publicly accessible merely to manufacture a live security incident.
+The live test was deliberately controlled and performed only against the dedicated test bucket.
 
 ## Threat Model
 
@@ -100,15 +104,17 @@ Terraform defines the AWS infrastructure so the configuration can be reviewed, r
 
 ### Safe Testing
 
-Integration testing used a controlled synthetic EventBridge event. The S3 bucket was not intentionally exposed to create a security failure.
+Testing was performed against a dedicated test bucket. A temporary public-read bucket policy was introduced to create a controlled compliance violation, allowing the complete AWS Config → EventBridge → Lambda remediation path to be validated.
+
+The test policy was removed after validation.
 
 ## Known Limitations
 
-The project has not demonstrated a complete live AWS-generated NON_COMPLIANT failure event from AWS Config through EventBridge into Lambda.
+The automated remediation intentionally focuses on enforcing S3 Public Access Block. It does not delete or modify the offending bucket policy itself.
 
-The EventBridge-to-Lambda integration was independently validated, while AWS Config was verified to be active and evaluating the resources.
+This keeps the remediation deterministic and narrowly scoped, while relying on S3 Block Public Access to prevent public access.
 
-This distinction is documented intentionally rather than claiming an unperformed test.
+A future enhancement could introduce a separate, explicitly authorized policy-remediation workflow if broader remediation is required.
 
 ## Future Improvements
 
