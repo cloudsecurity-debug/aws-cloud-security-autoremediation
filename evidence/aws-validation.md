@@ -12,9 +12,19 @@ AWS Cloud Security Auto-Remediation
 
 Function: `cloud-security-autoremediation-remediation`
 
-- State: `Active`
 - Runtime: `Python 3.12`
-- Last update status: `Successful`
+- Deployment verified in AWS Lambda
+- Remediation function is connected to the production EventBridge rule
+
+## AWS Config Validation
+
+Rule: `cloud-security-autoremediation-s3-public-read-prohibited`
+
+- State: `ACTIVE`
+- Source identifier: `S3_BUCKET_PUBLIC_READ_PROHIBITED`
+- Evaluation mode: `DETECTIVE`
+- AWS Config recorder: active
+- Recorder status: `SUCCESS`
 
 ## EventBridge Validation
 
@@ -27,43 +37,81 @@ Rule: `cloud-security-autoremediation-config-noncompliant`
 
 ## EventBridge Target
 
-One target was verified and points to the remediation Lambda.
+The production EventBridge rule was verified with one target pointing to:
 
-The input transformer extracts `$.detail.resourceId`.
+`cloud-security-autoremediation-remediation`
 
-## Lambda Invocation Permissions
+The target is the deployed remediation Lambda.
 
-- `AllowAWSConfigInvoke`
-- `AllowEventBridgeInvoke`
+## Live End-to-End Validation
 
-The EventBridge permission is scoped to the specific production rule.
+A controlled test was performed against the dedicated security-test S3 bucket.
+
+The test introduced a temporary public-read bucket policy to create a controlled AWS Config compliance violation.
+
+AWS Config recorded the resource as:
+
+`NON_COMPLIANT`
+
+The compliance history subsequently recorded the resource as:
+
+`COMPLIANT`
+
+The history contained repeated `NON_COMPLIANT` and `COMPLIANT` evaluations for the test bucket, demonstrating that the control was evaluated and returned to compliance.
 
 ## S3 Remediation Validation
 
-The remediation Lambda was directly tested against the controlled security-test bucket.
-
-- HTTP status: `200`
-- Action: `public_access_block_enforced`
-
-All four S3 Public Access Block controls were confirmed enabled:
+After remediation, the bucket's Public Access Block configuration was verified as:
 
 - `BlockPublicAcls: true`
 - `IgnorePublicAcls: true`
 - `BlockPublicPolicy: true`
 - `RestrictPublicBuckets: true`
 
+The temporary public-read bucket policy was removed after validation.
+
+## Remediation Boundary
+
+The remediation Lambda intentionally enforces S3 Public Access Block.
+
+It does not delete or modify the offending bucket policy.
+
+This keeps the automated action deterministic and narrowly scoped while relying on S3 Block Public Access to prevent public access.
+
 ## Terraform Validation
 
-Terraform previously reported `No changes`.
+Terraform reported:
+
+`No changes`
+
+The deployed infrastructure therefore matched the Terraform configuration during final validation.
 
 ## Unit Test Validation
 
-Command: `pytest -q tests/test_remediate_s3_public.py`
+Command:
 
-Result: `3 passed in 0.56s`
+`pytest -q tests/test_remediate_s3_public.py`
 
-## Validation Boundary
+Result:
 
-A complete live AWS-generated `NON_COMPLIANT` event flowing through AWS Config → EventBridge → Lambda has not been intentionally manufactured.
+`3 passed in 0.56s`
 
-Testing used controlled resources and synthetic events where appropriate. No public S3 exposure was intentionally created merely to generate a security incident.
+## Validation Summary
+
+The live security control was validated through the following path:
+
+AWS Config
+
+→ `NON_COMPLIANT`
+
+→ Amazon EventBridge
+
+→ AWS Lambda remediation
+
+→ S3 Public Access Block enforced
+
+→ AWS Config
+
+→ `COMPLIANT`
+
+Testing was performed only against the dedicated security-test bucket, and the temporary test policy was removed after validation.
